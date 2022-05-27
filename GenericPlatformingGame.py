@@ -1,6 +1,15 @@
 import re,os,random,pygame,time
+from cryptography.fernet import Fernet
 
+def load_key():
+    file = open("key.key", "rb")
+    toReturn = file.read()
+    file.close()
+    return toReturn
+
+fileKey = Fernet(load_key())
 file = open("leaderboard.txt","r")
+#translate encrypted to decrypted
 print("Leader Board:" + "\n" + file.read())
 file.close()
 
@@ -153,8 +162,10 @@ for levelFile in sorted(os.listdir(os.fsencode("levels")), key=numericalSort):
         print("Loading level " + levelFilename.replace("level_", "").replace(".txt", ""))
         with open("levels/"+levelFilename,"r") as transLevel:
             levels.append([])
+            #translate encrypted to decrypted
             for line in transLevel:
                 levels[-1].append(line)
+            transLevel.close()
 
 enemies = []
 walls = []
@@ -190,8 +201,9 @@ particle_colour = (220,220,220)
 spike_colour = (128,128,128)
 if str(input("Do you have a save?\n>: ")).lower() == "yes":
     slot = str(input("Name the save.\n>: ")).lower()
-    file = open("saves/" + slot + ".txt","r")
-    words = file.read().split()
+    file = open("saves/" + slot + ".bin","rb")
+    words = fileKey.decrypt(file.read()).split()
+    file.close()
     name = words[0]
     player.dscore = int(words[1])
     startTime2 = int(words[2])
@@ -282,8 +294,10 @@ while running:
     if user_input[pygame.K_ESCAPE]:
         if str(input("Would you like to save?\n>: ")).lower() == "yes":
             slot = str(input("Name the save.\n>: ")).lower()
-            file = open("saves/" + slot + ".txt", "w")
-            file.write(name + " " + str(player.dscore) + " " + str(startTime1) + " " + str(int(time.time())) + " " + str(levelTurn))
+            saveMessage = name + " " + str(player.dscore) + " " + str(startTime1) + " " + str(int(time.time())) + " " + str(levelTurn)
+            file = open("saves/" + slot + ".bin", "wb")
+            #translate decrypted to encrypted
+            file.write(fileKey.encrypt(saveMessage.encode()))
             file.close()
             print("Saved")
             running = False
@@ -388,6 +402,7 @@ while running:
             score = name + "'s Score" + (20-len(name))*" " + "= Deaths: " + (toDScoreLen-len(toDScoreCalc))*" " + toDScoreCalc + ", Time: " + (toTimeLen-len(toTimeCalc))*" " + toTimeCalc + "s"
             file = open("leaderboard.txt", "r+")
             file.read()
+            #translate decrypted to encrypted
             file.write(score + "\n")
             file.close()
             running = False
