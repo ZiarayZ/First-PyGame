@@ -1,4 +1,4 @@
-import os,random,pygame,time
+import re,os,random,pygame,time
 
 file = open("leaderboard.txt","r")
 print("Leader Board:" + "\n" + file.read())
@@ -98,9 +98,28 @@ class Enemy(object):
     def move_single_axis(self,dx,dy):
         self.rect.x += dx
         self.rect.y += dy
-        for objects in [walls,spikes]:
-            for wall in objects:#static collision
-                if self.rect.colliderect(wall):
+        for wall in walls:#wall collision
+            if self.rect.colliderect(wall):
+                if dx > 0:
+                    self.rect.right = wall.left
+                    if self.direction == "right":
+                        self.direction = "left"
+                if dx < 0:
+                    self.rect.left = wall.right
+                    if self.direction == "left":
+                        self.direction = "right"
+                if dy > 0:
+                    self.rect.bottom = wall.top
+                    if self.direction == "down":
+                        self.direction = "up"
+                if dy < 0:
+                    self.rect.top = wall.bottom
+                    if self.direction == "up":
+                        self.direction = "down"
+
+        for spike in spikes:#horizontal spike collision
+            if self.direction == "left" or self.direction == "right":
+                if self.rect.colliderect(spike):
                     if dx > 0:
                         self.rect.right = wall.left
                         if self.direction == "right":
@@ -111,252 +130,35 @@ class Enemy(object):
                             self.direction = "right"
                     if dy > 0:
                         self.rect.bottom = wall.top
-                        if self.direction == "down":
-                            self.direction = "up"
                     if dy < 0:
                         self.rect.top = wall.bottom
-                        if self.direction == "up":
-                            self.direction = "down"
-
     def check_y(self):
         if self.rect.y == 720:
             self.rect.y = 0
 
+numbers = re.compile(r'(\d+)')
+def numericalSort(value):
+    value = str(value)
+    parts = numbers.split(value)
+    parts[1::2] = map(int, parts[1::2])
+    return parts
+
 #Variable Stuff
-levels = [[
-    "WWWWWWWWWWWWWWWWWWWWW",
-    "W                   W",
-    "W   E               W",
-    "W                   W",
-    "W                   W",
-    "W          WWWWWWW  W",
-    "W                   W",
-    "W                   W",
-    "W               W   W",
-    "W  WWWWW            W",
-    "W                   W",
-    "W                 WWW",
-    "W                   W",
-    "W                   W",
-    "W      WWWWWW       W",
-    "W                   W",
-    "W                   W",
-    "W                   W",
-    "WWWWWWWWWWWWWWWWWWWWW",
-    "WWWWWWWWWWWWWWWWWWWWW",
-],[
-    "WWWWWWWWWWWWWWWWWWWWW",
-    "     WE              ",
-    "     W           W   ",
-    "W    W              W",
-    "W   WW          WW  W",
-    "W    W              W",
-    "W    W           W  W",
-    "W    W              W",
-    "WW   W       WWWWW  W",
-    "W    W              W",
-    "W    W           W  W",
-    "WW   W              W",
-    "W    WW             W",
-    "W    W           W  W",
-    "W    W            W W",
-    "W   WW              W",
-    "     W               ",
-    "     W               ",
-    "WWWWWWWWWWWWWWWWWWWWW",
-    "WWWWWWWWWWWWWWWWWWWWW",
-],[
-    "WWWWWWWWWWWWWWWWWWWWW",
-    "W                   W",
-    "W E                 W",
-    "W                  WW",
-    "W                   W",
-    "W                   W",
-    "WW                 WW",
-    "W                   W",
-    "W                   W",
-    "W                 WWW",
-    "W                   W",
-    "W                   W",
-    "W        W          W",
-    "W                   W",
-    "WW       W          W",
-    "W                   W",
-    "         W           ",
-    "                     ",
-    "WWWWWWWWWWWWWWWWWWWWW",
-    "WWWWWWWWWWWWWWWWWWWWW",
-],[
-    "WWWWWWWWWWWWWWWWWWWWW",
-    "W                   W",
-    "W E                 W",
-    "WWWWW               W",
-    "W                   W",
-    "W                   W",
-    "W                   W",
-    "WW                  W",
-    "W                   W",
-    "W                    W",
-    "WWWWWWWWWWWWWWWWWW   W",
-    "W                W  W",
-    "W                W  W",
-    "   WWWWWWW  WWWWWW   ",
-    "   W     W       W   ",
-    "WWWW            WWWWW",
-    "W     W       W     W",
-    "W                   W",
-    "WWWWWWWDDDDDDDWWWWWWW",
-    "WWWWWWWWWWWWWWWWWWWWW",
-],[
-    "WWWWWWWWWWWWWWWWWWWWW",
-    "W                   WWW",
-    "W                     W",
-    "W                     W",
-    "W                 W   W",
-    "WE                 W  W",
-    "WDDDDDDDDDDDDDDDDDDD  W",
-    "W                     W",
-    "W                     W",
-    "W       W           WWW",
-    "W                  DW",
-    "                 D   ",
-    "                     ",
-    "WWWDDDDDDDDDDDDDD   W",
-    "W                  W ",
-    "W                  W ",
-    "W                  W ",
-    "W                  W ",
-    "WWWDDDDDDWWDDDDDDWWWW",
-    "WWWWWWWWWWWWWWWWWWWWW",
-],[
-    "WWWWWWWWWWWWWWWWWWWWW",
-    "W                   W",
-    "W                   W",
-    "W  WWDDDDD          W",
-    "W   WWWWWWDDDDD     W",
-    "W   WWWWWWWWWWWDD   W",
-    "WW  W               W",
-    "W   W               W",
-    "W   W               W",
-    "W   W             DDW",
-    "WW  W          DDDWWW",
-    "W   W       DDDWWWWWW",
-    "W   W               W",
-    "W   W               W",
-    "WW  WDDDDD          W",
-    "W   WE    DDD       W",
-    "W   W        DD     W",
-    "W   W               W",
-    "WWWWWDDDDDW         W",
-    "WWWWWWWWWWWWWWWWWWWWW",
-],[
-    "WSSSSSWSWWWWWWWWWWWWW",
-    "W       VW          W",
-    "W  H     WE         W",
-    "W   WW   W          W",
-    "W    W   W          W",
-    "W    W   W         WW",
-    "WW   W   W        W W",
-    "W    W   W          W",
-    "W    W   W          W",
-    "W    W   WW         W",
-    "W   WW   W          W",
-    "W    W   W         WW",
-    "W    W   W          W",
-    "W    W   W          W",
-    "WW   W   W  V   V   W",
-    "W    W   W  W       W",
-    "W    W      W      HW",
-    "W    WV     WWWWWWWWW",
-    "WWWWWWWWWWWWWWWWWWWWW",
-    "WWWWWWWWWWWWWWWWWWWWW",
-],[
-    "WDDDDDDWWWWWWDDDDDDDW",
-    "WE                  WWW",
-    "W                     W",
-    "WWWH             WH   W",
-    "WWWWDDDDDDDDDDDDWWW   W",
-    "WDDDDDDDDDDDWWWDDDDW  W",
-    "W                     W",
-    "W                     W",
-    "W   HW              WWW",
-    "W   WWWWDDWDDDDWDDWWWWW",
-    "W  WDDDDDWWWWWWDDDDDW",
-    "W                   WWW",
-    "W                     W",
-    "WWW              W    W",
-    "WWWWWWWWWDDDDWWWWWW   W",
-    "WWWWDDDDWWWWWWWDDDDW  W",
-    "W                     W",
-    "W                     W",
-    "W  W               HWWW",
-    "WWWWWWWWWWWDWWWWWWWWW",
-],[
-    "WWWWWWWWWWWWWWWWWWWWE",
-    "D                  B ",
-    "D                  B ",
-    "W  WWWWWWWWWWWWWWWWWW",
-    "    D              B ",
-    "    D              B ",
-    "WWWWW  WWWWWWWWWWWWWW",
-    "        D          B ",
-    "        D          B ",
-    "WWWWWWWWW  WWWWWWWWWW",
-    "            D      B ",
-    "            D      B ",
-    "WWWWWWWWWWWWW  WWWWWW",
-    "                D  B ",
-    "                D  B ",
-    "WWWWWWWWWWWWWWWWW  WW",
-    "W                  BS",
-    "W                  BS",
-    "WWWWWWWWWWWWWWWWWWWWW",
-    "WWWWWWWWWWWWWWWWWWWWW",
-],[
-    "WWWWWWWWWWWWWWWWWWWWW",
-    "                   E ",
-    "     B               ",
-    "                B    ",
-    " BBB                 ",
-    "          B          ",
-    "                     ",
-    "  B                  ",
-    "     B               ",
-    "           B         ",
-    "                B    ",
-    "                     ",
-    "      B              ",
-    "                     ",
-    "  B             B    ",
-    "        B      B     ",
-    "                     ",
-    "    B                ",
-    "WWWWWWWWWWWWWWWWWWWWW",
-    "WWWWWWWWWWWWWWWWWWWWW",
-],[
-    "WDDDDDDWWWDDWWDDDWWWW",
-    "WE                  W",
-    "W                   W",
-    "W   WWWB D W  WWW    W",
-    "W    D B D D  D      W",
-    "W    D   DWD  DD    W",
-    "W    D   D D  D     W",
-    "     D   D D  DDD    ",
-    "    VVVVVVVVVVVVVV   ",
-    "W                 D W",
-    "W   DDD DDHHD DD   BW",
-    "    DHH DDDHD DHD    ",
-    "    DDH DHDHD D  DB  ",
-    "WDDDDHH DHDDD DHD   W",
-    "W   DDD DHHDD DD    W",
-    "W                  WW",
-    "W                   W",
-    "W  WH               W",
-    "WWWWWWWWWWWWWWWWWWWWW",
-    "WWWWWWWWWWWWWWWWWWWWW",
-]]
+levels = []
+#file opening and reading to levels array
+for levelFile in sorted(os.listdir(os.fsencode("levels")), key=numericalSort):
+    levelFilename = os.fsdecode(levelFile)
+    if levelFilename.endswith(".txt") and levelFilename.startswith("level_"):
+        #log level loading
+        print("Loading level " + levelFilename.replace("level_", "").replace(".txt", ""))
+        with open("levels/"+levelFilename,"r") as transLevel:
+            levels.append([])
+            for line in transLevel:
+                levels[-1].append(line)
+
 enemies = []
 walls = []
+fake_walls = []
 spikes = []
 blocks = []
 particles1 = []
@@ -383,6 +185,7 @@ for turn in range(200):
 player = Player() #Create a player object from class
 colour = (100,128,255)
 wall_colour = (255,255,255)
+fake_wall_colour = (254,254,254)
 particle_colour = (220,220,220)
 spike_colour = (128,128,128)
 if str(input("Do you have a save?\n>: ")).lower() == "yes":
@@ -421,6 +224,8 @@ for row in level:
     for col in row:
         if col == "W":#W - Wall
             walls.append(pygame.Rect(x,y,48,48))
+        if col == "S":#S - Fake Wall
+            fake_walls.append(pygame.Rect(x,y,48,48))
         if col == "D":#D - Death block
             spikes.append(pygame.Rect(x,y,48,48))
         if col == "H":#H - Horizontal death block
@@ -564,6 +369,7 @@ while running:
         
     if player.rect.colliderect(end_rect):
         del walls[:]
+        del fake_walls[:]
         del spikes[:]
         del enemies[:]
         del blocks[:]
@@ -591,6 +397,8 @@ while running:
             for col in row:
                 if col == "W":
                     walls.append(pygame.Rect(x,y,48,48))
+                if col == "S":
+                    fake_walls.append(pygame.Rect(x,y,48,48))
                 if col == "D":
                     spikes.append(pygame.Rect(x,y,48,48))
                 if col == "H":
@@ -611,6 +419,8 @@ while running:
     screen.fill((0,0,0))
     for wall in walls:
         pygame.draw.rect(screen,wall_colour,wall)
+    for fake_wall in fake_walls:
+        pygame.draw.rect(screen,fake_wall_colour,fake_wall)
     for spike in spikes:
         pygame.draw.rect(screen,spike_colour,spike)
     for enemy in enemies:
