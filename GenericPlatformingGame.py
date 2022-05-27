@@ -137,13 +137,21 @@ class Enemy(object):
         if self.rect.y == 720:
             self.rect.y = 0
 
+            
+numbers = re.compile(r'(\d+)')
+def numericalSort(value):
+    value = str(value)
+    parts = numbers.split(value)
+    parts[1::2] = map(int, parts[1::2])
+    return parts
+
 #Variable Stuff
 levels = []
 #file opening and reading to levels array
-levelDirectory = os.fsencode("levels")
-for levelFile in os.listdir(levelDirectory):
+for levelFile in sorted(os.listdir(os.fsencode("levels")), key=numericalSort):
     levelFilename = os.fsdecode(levelFile)
     if levelFilename.endswith(".txt") and levelFilename.startswith("level_"):
+        #log level loading
         print("Loading level " + levelFilename.replace("level_", "").replace(".txt", ""))
         with open("levels/"+levelFilename,"r") as transLevel:
             levels.append([])
