@@ -1,4 +1,4 @@
-import os,random,pygame,time
+import re,os,random,pygame,time
 
 file = open("leaderboard.txt","r")
 print("Leader Board:" + "\n" + file.read())
@@ -132,12 +132,10 @@ class Enemy(object):
                         self.rect.bottom = wall.top
                     if dy < 0:
                         self.rect.top = wall.bottom
-
     def check_y(self):
         if self.rect.y == 720:
             self.rect.y = 0
 
-            
 numbers = re.compile(r'(\d+)')
 def numericalSort(value):
     value = str(value)
