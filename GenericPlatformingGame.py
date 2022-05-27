@@ -84,16 +84,16 @@ class Enemy(object):
         self.direction = direction
 
     def move(self,dz):
+        if self.direction == "left":
+            self.move_single_axis(-dz,0)
         if self.direction == "right":
             self.move_single_axis(dz,0)
-            self.move_single_axis(0,3)
-        elif self.direction == "left":
-            self.move_single_axis(-dz,0)
-            self.move_single_axis(0,3)
-        if self.direction == "down":
-            self.move_single_axis(0,dz)
-        elif self.direction == "up":
+        if self.direction == "up":
             self.move_single_axis(0,-dz)
+        elif self.direction == "down":
+            self.move_single_axis(0,dz)
+        else:
+            self.move_single_axis(0,3)
 
     def move_single_axis(self,dx,dy):
         self.rect.x += dx
@@ -271,12 +271,12 @@ levels = [[
     "WWWWWWWWWWWWWWWWWWWWW",
     "WWWWWWWWWWWWWWWWWWWWW",
 ],[
-    "WDDDDDDDDDDDDDDDDDDDW",
+    "WDDDDDDWWWWWWDDDDDDDW",
     "WE                  WWW",
     "W                     W",
     "WWWH             WH   W",
-    "WWWWWWWWWWWWWWWWWWW   W",
-    "WDDDDDDDDDDDWDDDDDDW  W",
+    "WWWWDDDDDDDDDDDDWWW   W",
+    "WDDDDDDDDDDDWWWDDDDW  W",
     "W                     W",
     "W                     W",
     "W   HW              WWW",
@@ -394,6 +394,7 @@ if str(input("Do you have a save?\n>: ")).lower() == "yes":
     startTime2 = int(words[2])
     endTime = int(words[3])
     levelTurn = int(words[4])
+    particle_start_time = time.time() * 2
 else:
     name = str(input("What is your name? (Leader Board, One Word)\n>: "))
     endTime = 0
