@@ -22,172 +22,9 @@ class Blocker(object):
     def reset_blocker(self):
         self.active = False
 
-class Particle1(object):
+class Particle(object):
     def __init__(self):
         self.rect = pygame.Rect(0,1000,2,2)
-        particles1.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle2(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles2.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle3(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles3.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle4(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles4.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle5(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles5.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle6(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles6.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle7(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles7.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle8(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles8.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle9(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles9.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle10(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles10.append(self)
 
     def move(self,dx,dy):
         if dx != 0:
@@ -575,16 +412,16 @@ particles8 = []
 particles9 = []
 particles10 = []
 for turn in range(200):
-    Particle1()
-    Particle2()
-    Particle3()
-    Particle4()
-    Particle5()
-    Particle6()
-    Particle7()
-    Particle8()
-    Particle9()
-    Particle10()
+    particles1.append(Particle())
+    particles2.append(Particle())
+    particles3.append(Particle())
+    particles4.append(Particle())
+    particles5.append(Particle())
+    particles6.append(Particle())
+    particles7.append(Particle())
+    particles8.append(Particle())
+    particles9.append(Particle())
+    particles10.append(Particle())
 player = Player() #Create a player object from class
 colour = (100,128,255)
 wall_colour = (255,255,255)
