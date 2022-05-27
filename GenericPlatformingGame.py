@@ -19,9 +19,6 @@ class Blocker(object):
         self.rect.x += dx
         self.rect.y += dy
 
-    def reset_blocker(self):
-        self.active = False
-
 class Particle(object):
     def __init__(self):
         self.rect = pygame.Rect(0,1000,2,2)
@@ -35,9 +32,6 @@ class Particle(object):
     def move_single_axis(self,dx,dy):
         self.rect.x += dx
         self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
 
 class Player(object):
     def __init__(self):
@@ -56,17 +50,17 @@ class Player(object):
         self.rect.x += dx
         self.rect.y += dy
         for wall in walls:
-            if self.rect.colliderect(wall.rect):
+            if self.rect.colliderect(wall):
                 if dx > 0:
-                    self.rect.right = wall.rect.left
+                    self.rect.right = wall.left
                 if dx < 0:
-                    self.rect.left = wall.rect.right
+                    self.rect.left = wall.right
                 if dy > 0:
-                    self.rect.bottom = wall.rect.top
+                    self.rect.bottom = wall.top
                     self.onGround = True
                     self.turns = 0
                 if dy < 0:
-                    self.rect.top = wall.rect.bottom
+                    self.rect.top = wall.bottom
         for block in blocks:
             if self.rect.colliderect(block.rect):
                 if ((self.rect.y < block.rect.y - 50) == False) and self.rect.x > block.rect.x:
@@ -79,7 +73,7 @@ class Player(object):
                     self.onGround = True
                     self.turns = 0
         for spike in spikes:
-            if self.rect.colliderect(spike.rect):
+            if self.rect.colliderect(spike):
                 self.rect = pygame.Rect(50,800,60,60)
                 self.dscore += 1
 
@@ -99,20 +93,17 @@ class EnemyH(object):
         self.rect.x += dx
         self.rect.y += dy
         for wall in walls:
-            if self.rect.colliderect(wall.rect):
+            if self.rect.colliderect(wall):
                 if dx > 0:
-                    self.rect.right = wall.rect.left
+                    self.rect.right = wall.left
                     self.direction = "left"
                 if dx < 0:
-                    self.rect.left = wall.rect.right
+                    self.rect.left = wall.right
                     self.direction = "right"
                 if dy > 0:
-                    self.rect.bottom = wall.rect.top
+                    self.rect.bottom = wall.top
                 if dy < 0:
-                    self.rect.top = wall.rect.bottom
-
-    def reset_enemy(self):
-        self.active = False
+                    self.rect.top = wall.bottom
 
 class EnemyV(object):
     def __init__(self,wx,wy):
@@ -130,38 +121,17 @@ class EnemyV(object):
         self.rect.x += dx
         self.rect.y += dy
         for wall in walls:
-            if self.rect.colliderect(wall.rect):
+            if self.rect.colliderect(wall):
                 if dx > 0:
-                    self.rect.right = wall.rect.left
+                    self.rect.right = wall.left
                 if dx < 0:
-                    self.rect.left = wall.rect.right
+                    self.rect.left = wall.right
                 if dy > 0:
-                    self.rect.bottom = wall.rect.top
+                    self.rect.bottom = wall.top
                     self.direction = "up"
                 if dy < 0:
-                    self.rect.top = wall.rect.bottom
+                    self.rect.top = wall.bottom
                     self.direction = "down"
-
-    def reset_enemy(self):
-        self.active = False
-
-
-#Walls/Platforms and Spikes
-class Wall(object):
-    def __init__(self,wx,wy):
-        walls.append(self)
-        self.rect = pygame.Rect(wx,wy,48,48)
-
-    def reset_wall(self):
-        self.active = False
-
-class Spike(object):
-    def __init__(self,wx,wy):
-        spikes.append(self)
-        self.rect = pygame.Rect(wx,wy,48,48)
-
-    def reset_spike(self):
-        self.active = False
 
 #Variable Stuff
 levels = [[
@@ -461,9 +431,9 @@ x = y = 0
 for row in level: 
     for col in row:
         if col == "W":#W - Wall
-            Wall(x,y)
+            walls.append(pygame.Rect(x,y,48,48))
         if col == "D":#D - Death block
-            Spike(x,y)
+            spikes.append(pygame.Rect(x,y,48,48))
         if col == "H":#H - Horizontal death block
             EnemyH(x,y)
         if col == "V":#V - Vertical death block
@@ -637,9 +607,9 @@ while running:
         for row in level:
             for col in row:
                 if col == "W":
-                    Wall(x,y)
+                    walls.append(pygame.Rect(x,y,48,48))
                 if col == "D":
-                    Spike(x,y)
+                    spikes.append(pygame.Rect(x,y,48,48))
                 if col == "H":
                     EnemyH(x,y)
                 if col == "V":
@@ -657,9 +627,9 @@ while running:
     #Draw Screen
     screen.fill((0,0,0))
     for wall in walls:
-        pygame.draw.rect(screen,wall_colour,wall.rect)
+        pygame.draw.rect(screen,wall_colour,wall)
     for spike in spikes:
-        pygame.draw.rect(screen,spike_colour,spike.rect)
+        pygame.draw.rect(screen,spike_colour,spike)
     for enemy in enemiesH:
         pygame.draw.rect(screen,spike_colour,enemy.rect)
     for enemy in enemiesV:
