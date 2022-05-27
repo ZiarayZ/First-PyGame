@@ -570,7 +570,15 @@ while running:
         try:
             level = levels[levelTurn]
         except IndexError:
-            score = name + "'s Score         = Deaths: " + str(player.dscore) + ", Time: " +str(int(time.time())-int(startTime2)+endTime-startTime1) + "s"
+            toTimeCalc = str(int(time.time())-int(startTime2)+endTime-startTime1)
+            toTimeLen = 4
+            toDScoreCalc = str(player.dscore)
+            toDScoreLen = 3
+            if len(toDScoreCalc) > toDScoreLen:
+                toDScoreLen = len(toDScoreCalc)
+            if len(toTimeCalc) > toTimeLen:
+                toTimeLen = len(toTimeCalc)
+            score = name + "'s Score" + (20-len(name))*" " + "= Deaths: " + (toDScoreLen-len(toDScoreCalc))*" " + toDScoreCalc + ", Time: " + (toTimeLen-len(toTimeCalc))*" " + toTimeCalc + "s"
             file = open("leaderboard.txt", "r+")
             file.read()
             file.write(score + "\n")
