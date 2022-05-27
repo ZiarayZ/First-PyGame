@@ -19,13 +19,9 @@ class Blocker(object):
         self.rect.x += dx
         self.rect.y += dy
 
-    def reset_blocker(self):
-        self.active = False
-
-class Particle1(object):
+class Particle(object):
     def __init__(self):
         self.rect = pygame.Rect(0,1000,2,2)
-        particles1.append(self)
 
     def move(self,dx,dy):
         if dx != 0:
@@ -36,171 +32,6 @@ class Particle1(object):
     def move_single_axis(self,dx,dy):
         self.rect.x += dx
         self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle2(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles2.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle3(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles3.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle4(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles4.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle5(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles5.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle6(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles6.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle7(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles7.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle8(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles8.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle9(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles9.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
-
-class Particle10(object):
-    def __init__(self):
-        self.rect = pygame.Rect(0,1000,2,2)
-        particles10.append(self)
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-
-    def reset_particle(self):
-        self.active = False
 
 class Player(object):
     def __init__(self):
@@ -219,17 +50,17 @@ class Player(object):
         self.rect.x += dx
         self.rect.y += dy
         for wall in walls:
-            if self.rect.colliderect(wall.rect):
+            if self.rect.colliderect(wall):
                 if dx > 0:
-                    self.rect.right = wall.rect.left
+                    self.rect.right = wall.left
                 if dx < 0:
-                    self.rect.left = wall.rect.right
+                    self.rect.left = wall.right
                 if dy > 0:
-                    self.rect.bottom = wall.rect.top
+                    self.rect.bottom = wall.top
                     self.onGround = True
                     self.turns = 0
                 if dy < 0:
-                    self.rect.top = wall.rect.bottom
+                    self.rect.top = wall.bottom
         for block in blocks:
             if self.rect.colliderect(block.rect):
                 if ((self.rect.y < block.rect.y - 50) == False) and self.rect.x > block.rect.x:
@@ -242,89 +73,54 @@ class Player(object):
                     self.onGround = True
                     self.turns = 0
         for spike in spikes:
-            if self.rect.colliderect(spike.rect):
+            if self.rect.colliderect(spike):
                 self.rect = pygame.Rect(50,800,60,60)
                 self.dscore += 1
 
-class EnemyH(object):
-    def __init__(self,wx,wy):
-        enemiesH.append(self)
+class Enemy(object):
+    def __init__(self,wx,wy,direction="left"):
+        enemies.append(self)
         self.rect = pygame.Rect(wx,wy,48,48)
-        self.direction = "left"
+        self.direction = direction
 
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
+    def move(self,dz):
+        if self.direction == "right":
+            self.move_single_axis(dz,0)
+            self.move_single_axis(0,3)
+        elif self.direction == "left":
+            self.move_single_axis(-dz,0)
+            self.move_single_axis(0,3)
+        if self.direction == "down":
+            self.move_single_axis(0,dz)
+        elif self.direction == "up":
+            self.move_single_axis(0,-dz)
 
     def move_single_axis(self,dx,dy):
         self.rect.x += dx
         self.rect.y += dy
-        for wall in walls:
-            if self.rect.colliderect(wall.rect):
-                if dx > 0:
-                    self.rect.right = wall.rect.left
-                    self.direction = "left"
-                if dx < 0:
-                    self.rect.left = wall.rect.right
-                    self.direction = "right"
-                if dy > 0:
-                    self.rect.bottom = wall.rect.top
-                if dy < 0:
-                    self.rect.top = wall.rect.bottom
+        for objects in [walls,spikes]:
+            for wall in objects:#static collision
+                if self.rect.colliderect(wall):
+                    if dx > 0:
+                        self.rect.right = wall.left
+                        if self.direction == "right":
+                            self.direction = "left"
+                    if dx < 0:
+                        self.rect.left = wall.right
+                        if self.direction == "left":
+                            self.direction = "right"
+                    if dy > 0:
+                        self.rect.bottom = wall.top
+                        if self.direction == "down":
+                            self.direction = "up"
+                    if dy < 0:
+                        self.rect.top = wall.bottom
+                        if self.direction == "up":
+                            self.direction = "down"
 
-    def reset_enemy(self):
-        self.active = False
-
-class EnemyV(object):
-    def __init__(self,wx,wy):
-        enemiesV.append(self)
-        self.rect = pygame.Rect(wx,wy,48,48)
-        self.direction = "down"
-
-    def move(self,dx,dy):
-        if dx != 0:
-            self.move_single_axis(dx,0)
-        if dy != 0:
-            self.move_single_axis(0,dy)
-
-    def move_single_axis(self,dx,dy):
-        self.rect.x += dx
-        self.rect.y += dy
-        for wall in walls:
-            if self.rect.colliderect(wall.rect):
-                if dx > 0:
-                    self.rect.right = wall.rect.left
-                if dx < 0:
-                    self.rect.left = wall.rect.right
-                if dy > 0:
-                    self.rect.bottom = wall.rect.top
-                    self.direction = "up"
-                if dy < 0:
-                    self.rect.top = wall.rect.bottom
-                    self.direction = "down"
-
-    def reset_enemy(self):
-        self.active = False
-
-
-#Walls/Platforms and Spikes
-class Wall(object):
-    def __init__(self,wx,wy):
-        walls.append(self)
-        self.rect = pygame.Rect(wx,wy,48,48)
-
-    def reset_wall(self):
-        self.active = False
-
-class Spike(object):
-    def __init__(self,wx,wy):
-        spikes.append(self)
-        self.rect = pygame.Rect(wx,wy,48,48)
-
-    def reset_spike(self):
-        self.active = False
+    def check_y(self):
+        if self.rect.y == 720:
+            self.rect.y = 0
 
 #Variable Stuff
 levels = [[
@@ -480,21 +276,21 @@ levels = [[
     "W                     W",
     "WWWH             WH   W",
     "WWWWWWWWWWWWWWWWWWW   W",
-    "WDDDDDDDDDDDDDDDDDDW  W",
+    "WDDDDDDDDDDDWDDDDDDW  W",
     "W                     W",
     "W                     W",
     "W   HW              WWW",
-    "W   WWWWWWWWWWWWWWWWWWW",
-    "W  WDDDDDDDDDDDDDDDDW",
+    "W   WWWWDDWDDDDWDDWWWWW",
+    "W  WDDDDDWWWWWWDDDDDW",
     "W                   WWW",
     "W                     W",
     "WWW              W    W",
-    "WWWWWWWWWWWWWWWWWWW   W",
-    "WWWWDDDDDDDDDDDDDDDW  W",
+    "WWWWWWWWWDDDDWWWWWW   W",
+    "WWWWDDDDWWWWWWWDDDDW  W",
     "W                     W",
     "W                     W",
     "W  W               HWWW",
-    "WWWWWWWWWWWWWWWWWWWWW",
+    "WWWWWWWWWWWDWWWWWWWWW",
 ],[
     "WWWWWWWWWWWWWWWWWWWWE",
     "D                  B ",
@@ -559,8 +355,7 @@ levels = [[
     "WWWWWWWWWWWWWWWWWWWWW",
     "WWWWWWWWWWWWWWWWWWWWW",
 ]]
-enemiesH = []
-enemiesV = []
+enemies = []
 walls = []
 spikes = []
 blocks = []
@@ -575,16 +370,16 @@ particles8 = []
 particles9 = []
 particles10 = []
 for turn in range(200):
-    Particle1()
-    Particle2()
-    Particle3()
-    Particle4()
-    Particle5()
-    Particle6()
-    Particle7()
-    Particle8()
-    Particle9()
-    Particle10()
+    particles1.append(Particle())
+    particles2.append(Particle())
+    particles3.append(Particle())
+    particles4.append(Particle())
+    particles5.append(Particle())
+    particles6.append(Particle())
+    particles7.append(Particle())
+    particles8.append(Particle())
+    particles9.append(Particle())
+    particles10.append(Particle())
 player = Player() #Create a player object from class
 colour = (100,128,255)
 wall_colour = (255,255,255)
@@ -624,13 +419,13 @@ x = y = 0
 for row in level: 
     for col in row:
         if col == "W":#W - Wall
-            Wall(x,y)
+            walls.append(pygame.Rect(x,y,48,48))
         if col == "D":#D - Death block
-            Spike(x,y)
+            spikes.append(pygame.Rect(x,y,48,48))
         if col == "H":#H - Horizontal death block
-            EnemyH(x,y)
+            Enemy(x,y,"left")
         if col == "V":#V - Vertical death block
-            EnemyV(x,y)
+            Enemy(x,y,"down")
         if col == "B":#B - Blocker
             Blocker(x,y)
         if col == "E":#E - Escape
@@ -659,25 +454,12 @@ while running:
                 speed = 2
 
     #Enemy movement
-    for enemy in enemiesH:
-        if enemy.direction == "left":
-            enemy.move(-5,0)
-        if enemy.direction == "right":
-            enemy.move(5,0)
-        enemy.move(0,3)
+    for enemy in enemies:
+        enemy.move(5)
         if enemy.rect.colliderect(player.rect):
             player.rect = pygame.Rect(50,800,60,60)
             player.dscore += 1
-        if enemy.rect.y == 720:
-            enemy.rect.y = 0
-    for enemy in enemiesV:
-        if enemy.direction == "up":
-            enemy.move(0,-5)
-        if enemy.direction == "down":
-            enemy.move(0,5)
-        if player.rect.colliderect(enemy.rect):
-            player.rect = pygame.Rect(50,800,60,60)
-            player.dscore += 1
+        enemy.check_y()
     for block in blocks:
         block.move(6,0)
         if block.rect.x > width + 5:
@@ -782,8 +564,7 @@ while running:
     if player.rect.colliderect(end_rect):
         del walls[:]
         del spikes[:]
-        del enemiesH[:]
-        del enemiesV[:]
+        del enemies[:]
         del blocks[:]
         levelTurn += 1
         try:
@@ -800,13 +581,13 @@ while running:
         for row in level:
             for col in row:
                 if col == "W":
-                    Wall(x,y)
+                    walls.append(pygame.Rect(x,y,48,48))
                 if col == "D":
-                    Spike(x,y)
+                    spikes.append(pygame.Rect(x,y,48,48))
                 if col == "H":
-                    EnemyH(x,y)
+                    Enemy(x,y,"left")
                 if col == "V":
-                    EnemyV(x,y)
+                    Enemy(x,y,"down")
                 if col == "B":
                     Blocker(x,y)
                 if col == "E":
@@ -820,12 +601,10 @@ while running:
     #Draw Screen
     screen.fill((0,0,0))
     for wall in walls:
-        pygame.draw.rect(screen,wall_colour,wall.rect)
+        pygame.draw.rect(screen,wall_colour,wall)
     for spike in spikes:
-        pygame.draw.rect(screen,spike_colour,spike.rect)
-    for enemy in enemiesH:
-        pygame.draw.rect(screen,spike_colour,enemy.rect)
-    for enemy in enemiesV:
+        pygame.draw.rect(screen,spike_colour,spike)
+    for enemy in enemies:
         pygame.draw.rect(screen,spike_colour,enemy.rect)
     for block in blocks:
         pygame.draw.rect(screen,wall_colour,block.rect)
