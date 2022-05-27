@@ -98,9 +98,28 @@ class Enemy(object):
     def move_single_axis(self,dx,dy):
         self.rect.x += dx
         self.rect.y += dy
-        for objects in [walls,spikes]:
-            for wall in objects:#static collision
-                if self.rect.colliderect(wall):
+        for wall in walls:#wall collision
+            if self.rect.colliderect(wall):
+                if dx > 0:
+                    self.rect.right = wall.left
+                    if self.direction == "right":
+                        self.direction = "left"
+                if dx < 0:
+                    self.rect.left = wall.right
+                    if self.direction == "left":
+                        self.direction = "right"
+                if dy > 0:
+                    self.rect.bottom = wall.top
+                    if self.direction == "down":
+                        self.direction = "up"
+                if dy < 0:
+                    self.rect.top = wall.bottom
+                    if self.direction == "up":
+                        self.direction = "down"
+
+        for spike in spikes:#horizontal spike collision
+            if self.direction == "left" or self.direction == "right":
+                if self.rect.colliderect(spike):
                     if dx > 0:
                         self.rect.right = wall.left
                         if self.direction == "right":
@@ -111,12 +130,8 @@ class Enemy(object):
                             self.direction = "right"
                     if dy > 0:
                         self.rect.bottom = wall.top
-                        if self.direction == "down":
-                            self.direction = "up"
                     if dy < 0:
                         self.rect.top = wall.bottom
-                        if self.direction == "up":
-                            self.direction = "down"
 
     def check_y(self):
         if self.rect.y == 720:
@@ -357,6 +372,7 @@ levels = [[
 ]]
 enemies = []
 walls = []
+fake_walls = []
 spikes = []
 blocks = []
 particles1 = []
@@ -383,6 +399,7 @@ for turn in range(200):
 player = Player() #Create a player object from class
 colour = (100,128,255)
 wall_colour = (255,255,255)
+fake_wall_colour = (254,254,254)
 particle_colour = (220,220,220)
 spike_colour = (128,128,128)
 if str(input("Do you have a save?\n>: ")).lower() == "yes":
@@ -421,6 +438,8 @@ for row in level:
     for col in row:
         if col == "W":#W - Wall
             walls.append(pygame.Rect(x,y,48,48))
+        if col == "S":#S - Fake Wall
+            fake_walls.append(pygame.Rect(x,y,48,48))
         if col == "D":#D - Death block
             spikes.append(pygame.Rect(x,y,48,48))
         if col == "H":#H - Horizontal death block
@@ -591,6 +610,8 @@ while running:
             for col in row:
                 if col == "W":
                     walls.append(pygame.Rect(x,y,48,48))
+                if col == "S":
+                    fake_walls.append(pygame.Rect(x,y,48,48))
                 if col == "D":
                     spikes.append(pygame.Rect(x,y,48,48))
                 if col == "H":
@@ -611,6 +632,8 @@ while running:
     screen.fill((0,0,0))
     for wall in walls:
         pygame.draw.rect(screen,wall_colour,wall)
+    for fake_wall in fake_walls:
+        pygame.draw.rect(screen,fake_wall_colour,fake_wall)
     for spike in spikes:
         pygame.draw.rect(screen,spike_colour,spike)
     for enemy in enemies:
