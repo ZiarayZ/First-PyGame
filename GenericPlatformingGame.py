@@ -583,6 +583,7 @@ while running:
         
     if player.rect.colliderect(end_rect):
         del walls[:]
+        del fake_walls[:]
         del spikes[:]
         del enemies[:]
         del blocks[:]
