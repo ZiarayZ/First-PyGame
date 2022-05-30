@@ -155,17 +155,18 @@ def numericalSort(value):
 #Variable Stuff
 levels = []
 #file opening and reading to levels array
-for levelFile in sorted(os.listdir(os.fsencode("levels")), key=numericalSort):
+for levelFile in sorted(os.listdir(os.fsencode("levels/maps")), key=numericalSort):
     levelFilename = os.fsdecode(levelFile)
-    if levelFilename.endswith(".txt") and levelFilename.startswith("level_"):
+    if levelFilename.endswith(".bin") and levelFilename.startswith("level_"):
         #log level loading
-        print("Loading level " + levelFilename.replace("level_", "").replace(".txt", ""))
-        with open("levels/"+levelFilename,"r") as transLevel:
-            levels.append([])
-            #translate encrypted to decrypted
-            for line in transLevel:
-                levels[-1].append(line)
-            transLevel.close()
+        print("Loading level " + levelFilename.replace("level_", "").replace(".bin", ""))
+        transLevel = open(os.path.join("levels/maps", levelFilename), "rb")
+        levels.append([])
+        lines = fileKey.decrypt(transLevel.read()).decode().split("\n")
+        #translate encrypted to decrypted
+        for line in lines:
+            levels[-1].append(line)
+        transLevel.close()
 
 enemies = []
 walls = []
@@ -201,7 +202,7 @@ particle_colour = (220,220,220)
 spike_colour = (128,128,128)
 if str(input("Do you have a save?\n>: ")).lower() == "yes":
     slot = str(input("Name the save.\n>: ")).lower()
-    file = open("saves/" + slot + ".bin","rb")
+    file = open(os.path.join("saves", slot + ".bin"), "rb")
     words = fileKey.decrypt(file.read()).split()
     file.close()
     name = words[0]
@@ -295,7 +296,7 @@ while running:
         if str(input("Would you like to save?\n>: ")).lower() == "yes":
             slot = str(input("Name the save.\n>: ")).lower()
             saveMessage = name + " " + str(player.dscore) + " " + str(startTime1) + " " + str(int(time.time())) + " " + str(levelTurn)
-            file = open("saves/" + slot + ".bin", "wb")
+            file = open(os.path.join("saves", slot + ".bin"), "wb")
             #translate decrypted to encrypted
             file.write(fileKey.encrypt(saveMessage.encode()))
             file.close()

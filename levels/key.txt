@@ -1,7 +1,0 @@
-W = Wall             - a static box that stops things passing through it
-E = End Goal         - the red exit that proceeds to the next level
-D = Spike            - a Wall that kills the Player
-S = Fake Wall        - a Wall that things can pass through (barely noticable colour difference)
-H = Horizontal Enemy - they go left and then right and bounce off Walls and Spikes (they also fall down onto Walls or Spikes)
-V = Vertical Enemy   - they go up and then down and bounce off Walls only
-B = Blockers         - moving Walls that go only right and wrap back to the left side after leaving the right side only collides with Player or Enemies
