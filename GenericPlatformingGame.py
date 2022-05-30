@@ -130,17 +130,17 @@ class Enemy(object):
             if self.direction == "left" or self.direction == "right":
                 if self.rect.colliderect(spike):
                     if dx > 0:
-                        self.rect.right = wall.left
+                        self.rect.right = spike.left
                         if self.direction == "right":
                             self.direction = "left"
                     if dx < 0:
-                        self.rect.left = wall.right
+                        self.rect.left = spike.right
                         if self.direction == "left":
                             self.direction = "right"
                     if dy > 0:
-                        self.rect.bottom = wall.top
+                        self.rect.bottom = spike.top
                     if dy < 0:
-                        self.rect.top = wall.bottom
+                        self.rect.top = spike.bottom
     def check_y(self):
         if self.rect.y == 720:
             self.rect.y = 0
