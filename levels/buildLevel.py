@@ -3,6 +3,7 @@ import os
 
 test = levelName = ""
 def looped():
+    global levelName, test
     print("Default levels 1-11, name your levels 12+")
     levelName = input("\nSpecify name of map.\nFor example: \'level_12\'\n\n>: ").lower().strip() + ".bin"
     levelName = levelName.replace(".txt", "").replace(".bin.bin", ".bin")
@@ -37,12 +38,12 @@ while running:
     while test >= 1 and test <= 11:
         print("You cannot replace the original 11 levels!!")
         looped()
-    else:
-        file = open(os.path.join("maps", levelName), "wb")
-        #translate decrypted to encrypted
-        file.write(levelKey.encrypt(level.encode()))
-        file.close()
-        print("Level creation finished successfully.")
+
+    file = open(os.path.join("maps", levelName), "wb")
+    #translate decrypted to encrypted
+    file.write(levelKey.encrypt(level.encode()))
+    file.close()
+    print("Level creation finished successfully.")
 
     again = input("Would you like to load another level?\n\n>: ").lower().strip()
     if again == "no" or again == "n":
