@@ -5,7 +5,7 @@ test = levelName = ""
 def looped():
     global levelName, test
     print("Default levels 1-11, name your levels 12+")
-    levelName = input("\nSpecify name of map.\nFor example: \'level_12\'\n\n>: ").lower().strip() + ".bin"
+    levelName = str(input("\nSpecify name of map.\nFor example: \'level_12\'\n\n>: ")).lower().strip() + ".bin"
     levelName = levelName.replace(".txt", "").replace(".bin.bin", ".bin")
     if "level_" in levelName:
         test = levelName.replace("level_","").replace(".bin","")
@@ -20,7 +20,7 @@ print("")
 
 running = True
 while running:
-    levelName = input("\nSpecify name of map (txt) file.\nFor example: \'example level.txt\'\n\n>: ").strip()
+    levelName = str(input("\nSpecify name of map (txt) file.\nFor example: \'example level.txt\'\n\n>: ")).strip()
     level = ""
     if not levelName.endswith(".txt") and not levelName.endswith(".bin"):
         levelName += ".txt"
@@ -45,6 +45,6 @@ while running:
     file.close()
     print("Level creation finished successfully.")
 
-    again = input("Would you like to load another level?\n\n>: ").lower().strip()
+    again = str(input("Would you like to load another level?\n\n>: ")).lower().strip()
     if again == "no" or again == "n":
         running = False
