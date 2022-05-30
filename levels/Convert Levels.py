@@ -11,7 +11,7 @@ def looped():
         test = levelName.replace("level_","").replace(".bin","")
         test = int(test)
 
-file = open(os.path.join(os.path.dirname(os.path.dirname(__file__)), "key.key"), "rb")
+file = open(os.path.join(os.path.dirname(os.path.dirname(__file__)), "saves/key.key"), "rb")
 load_key = file.read()
 levelKey = Fernet(load_key)
 file.close()

@@ -3,5 +3,4 @@
 Created when I first learned to code with my first language Python. <br />
 Finally moved to Github whilst I make improvements. <br />
 <br />
-To use this project you need to have PyGame. <br />
-To use this branch you need to have Cryptography.
+To use this project you need to have PyGame and Cryptography installed on Python 3.7+.

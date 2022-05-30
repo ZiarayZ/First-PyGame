@@ -2,7 +2,7 @@ import re,os,random,pygame,time
 from cryptography.fernet import Fernet
 
 def load_key():
-    file = open("key.key", "rb")
+    file = open("saves/key.key", "rb")
     toReturn = file.read()
     file.close()
     return toReturn
