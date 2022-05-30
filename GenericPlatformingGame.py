@@ -8,10 +8,27 @@ def load_key():
     return toReturn
 
 fileKey = Fernet(load_key())
-file = open("leaderboard.txt","r")
+file = open("leaderboard.bin","rb")
 #translate encrypted to decrypted
-print("Leader Board:" + "\n" + file.read())
+leaderScores = fileKey.decrypt(file.read()).decode().strip().split("\n")
+listoftimes = {}
+order = 0
+for line in leaderScores:
+    order += 1
+    newTime = ""
+    for letter in line[::-1]:
+        if letter != "s" and letter != " ":
+            newTime += letter
+        elif letter == " ":
+            break
+    listoftimes[order] = int(newTime[::-1])
+sorted_times = {item[0]:item[1] for item in sorted(listoftimes.items(), key=lambda x: x[1])}
+newLeaderScores = ""
+for index in list(sorted_times.keys()):
+    newLeaderScores += leaderScores[index-1] + "\n"
+print("Leader Board:" + "\n" + newLeaderScores)
 file.close()
+del sorted_times,listoftimes,order,newTime,leaderScores,newLeaderScores
 
 class Blocker(object):
     def __init__(self,wx,wy):
@@ -154,12 +171,12 @@ def numericalSort(value):
 
 #Variable Stuff
 levels = []
+print("Loading levels...")
 #file opening and reading to levels array
 for levelFile in sorted(os.listdir(os.fsencode("levels/maps")), key=numericalSort):
     levelFilename = os.fsdecode(levelFile)
     if levelFilename.endswith(".bin") and levelFilename.startswith("level_"):
         #log level loading
-        print("Loading level " + levelFilename.replace("level_", "").replace(".bin", ""))
         transLevel = open(os.path.join("levels/maps", levelFilename), "rb")
         levels.append([])
         lines = fileKey.decrypt(transLevel.read()).decode().split("\n")
@@ -168,6 +185,7 @@ for levelFile in sorted(os.listdir(os.fsencode("levels/maps")), key=numericalSor
             levels[-1].append(line)
         transLevel.close()
 
+print("Levels loaded!")
 enemies = []
 walls = []
 fake_walls = []
@@ -200,12 +218,15 @@ wall_colour = (255,255,255)
 fake_wall_colour = (254,254,254)
 particle_colour = (220,220,220)
 spike_colour = (128,128,128)
-if str(input("Do you have a save?\n>: ")).lower() == "yes":
+save_answer = str(input("Do you have a save?\n>: ")).strip().lower()
+if save_answer == "yes" or save_answer == "ye" or save_answer == "y":
+    for saveFile in os.listdir(os.fsencode("saves")):
+        print(os.fsdecode(saveFile).replace(".bin",""))
     slot = str(input("Name the save.\n>: ")).lower()
     file = open(os.path.join("saves", slot + ".bin"), "rb")
-    words = fileKey.decrypt(file.read()).split()
+    words = fileKey.decrypt(file.read()).decode().split()
     file.close()
-    name = words[0]
+    name = str(words[0])
     player.dscore = int(words[1])
     startTime2 = int(words[2])
     endTime = int(words[3])
@@ -401,10 +422,12 @@ while running:
             if len(toTimeCalc) > toTimeLen:
                 toTimeLen = len(toTimeCalc)
             score = name + "'s Score" + (20-len(name))*" " + "= Deaths: " + (toDScoreLen-len(toDScoreCalc))*" " + toDScoreCalc + ", Time: " + (toTimeLen-len(toTimeCalc))*" " + toTimeCalc + "s"
-            file = open("leaderboard.txt", "r+")
-            file.read()
             #translate decrypted to encrypted
-            file.write(score + "\n")
+            file = open("leaderboard.bin", "rb")
+            readScore = fileKey.decrypt(file.read()).decode()
+            file.close()
+            file = open("leaderboard.bin", "wb")
+            file.write(fileKey.encrypt((readScore + score + "\n").encode()))
             file.close()
             running = False
             break
