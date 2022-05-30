@@ -29,11 +29,13 @@ for index in list(sorted_times.keys()):
 print("Leader Board:" + "\n" + newLeaderScores)
 file.close()
 del sorted_times,listoftimes,order,newTime,leaderScores,newLeaderScores
+clone = pygame.Rect(0,0,1,1)
 
 class Blocker(object):
     def __init__(self,wx,wy):
         self.rect = pygame.Rect(wx,wy,48,48)
         blocks.append(self)
+        self.speed = 5
 
     def move(self,dx,dy):
         if dx != 0:
@@ -44,6 +46,17 @@ class Blocker(object):
     def move_single_axis(self,dx,dy):
         self.rect.x += dx
         self.rect.y += dy
+        if self.rect.colliderect(player.rect):
+            if dx > 0:
+                player.rect.left = self.rect.right
+            if dx < 0:
+                player.rect.right = self.rect.left
+            if dy > 0:
+                player.rect.top = self.rect.bottom
+            if dy < 0:
+                player.rect.bottom = self.rect.top
+                player.onGround = True
+                player.turns = 0
 
 class Particle(object):
     def __init__(self):
@@ -65,6 +78,7 @@ class Player(object):
         self.onGround = True
         self.turns = 0
         self.dscore = 0
+        self.speed = 2
 
     def move(self,dx,dy):
         if dx != 0:
@@ -75,33 +89,30 @@ class Player(object):
     def move_single_axis(self,dx,dy):
         self.rect.x += dx
         self.rect.y += dy
-        for wall in walls:
-            if self.rect.colliderect(wall):
-                if dx > 0:
-                    self.rect.right = wall.left
-                if dx < 0:
-                    self.rect.left = wall.right
-                if dy > 0:
-                    self.rect.bottom = wall.top
-                    self.onGround = True
-                    self.turns = 0
-                if dy < 0:
-                    self.rect.top = wall.bottom
+
         for block in blocks:
-            if self.rect.colliderect(block.rect):
-                if ((self.rect.y < block.rect.y - 50) == False) and self.rect.x > block.rect.x:
-                    self.rect.left = block.rect.right
-                if ((self.rect.y < block.rect.y - 50) == False) and self.rect.x < block.rect.x:
-                    self.rect.right = block.rect.left
-                if self.rect.y < block.rect.y - 50:
-                    self.rect.bottom = block.rect.top
-                    self.move(6,0)
-                    self.onGround = True
-                    self.turns = 0
+            self.colliderect(dx, dy, block.rect, block.speed)
+        for wall in walls:
+            self.colliderect(dx, dy, wall)
         for spike in spikes:
             if self.rect.colliderect(spike):
-                self.rect = pygame.Rect(50,800,60,60)
+                self.rect.x, self.rect.y = 50, 800
                 self.dscore += 1
+
+    def colliderect(self, dx, dy, rect, moveCheck=0):
+        if self.rect.colliderect(rect):
+            if dx > 0:
+                self.rect.right = rect.left
+            if dx < 0:
+                self.rect.left = rect.right
+            if dy > 0:
+                self.rect.bottom = rect.top
+                self.onGround = True
+                self.turns = 0
+                if moveCheck != 0:
+                    self.move(moveCheck,0)
+            if dy < 0:
+                self.rect.top = rect.bottom
 
 class Enemy(object):
     def __init__(self,wx,wy,direction="left"):
@@ -124,40 +135,31 @@ class Enemy(object):
     def move_single_axis(self,dx,dy):
         self.rect.x += dx
         self.rect.y += dy
-        for wall in walls:#wall collision
-            if self.rect.colliderect(wall):
+
+        self.colliderect(dx, dy, walls)
+        self.colliderect(dx, dy, spikes, True)
+
+    def colliderect(self, dx, dy, rects, spikeCheck=False):
+        for rect in rects:
+            if self.rect.colliderect(rect):
                 if dx > 0:
-                    self.rect.right = wall.left
+                    self.rect.right = rect.left
                     if self.direction == "right":
                         self.direction = "left"
                 if dx < 0:
-                    self.rect.left = wall.right
+                    self.rect.left = rect.right
                     if self.direction == "left":
                         self.direction = "right"
-                if dy > 0:
-                    self.rect.bottom = wall.top
-                    if self.direction == "down":
-                        self.direction = "up"
-                if dy < 0:
-                    self.rect.top = wall.bottom
-                    if self.direction == "up":
-                        self.direction = "down"
-
-        for spike in spikes:#horizontal spike collision
-            if self.direction == "left" or self.direction == "right":
-                if self.rect.colliderect(spike):
-                    if dx > 0:
-                        self.rect.right = spike.left
-                        if self.direction == "right":
-                            self.direction = "left"
-                    if dx < 0:
-                        self.rect.left = spike.right
-                        if self.direction == "left":
-                            self.direction = "right"
+                if not (spikeCheck and (self.direction == "up" or self.direction == "down")):
                     if dy > 0:
-                        self.rect.bottom = spike.top
+                        self.rect.bottom = rect.top
+                        if self.direction == "down":
+                            self.direction = "up"
                     if dy < 0:
-                        self.rect.top = spike.bottom
+                        self.rect.top = rect.bottom
+                        if self.direction == "up":
+                            self.direction = "down"
+
     def check_y(self):
         if self.rect.y == 720:
             self.rect.y = 0
@@ -238,7 +240,6 @@ else:
     startTime2 = 0
     levelTurn = 0
     particle_start_time = time.time() * 2
-speed = 2
 
 #Start pygame
 os.environ["SDL_VIDEO_CENTERED"] = "1"
@@ -288,10 +289,10 @@ while running:
         if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_SPACE):
             if colour == (100,128,255):
                 colour = (255,128,100)
-                speed = 6
+                player.speed = 6
             else:
                 colour = (100,128,255)
-                speed = 2
+                player.speed = 2
 
     #Enemy movement
     for enemy in enemies:
@@ -301,9 +302,9 @@ while running:
             player.dscore += 1
         enemy.check_y()
     for block in blocks:
-        block.move(6,0)
-        if block.rect.x > width + 5:
-            block.rect.x = -60
+        block.move(block.speed,0)
+        if block.rect.x > width - 24:
+            block.rect.x = -24
     if time.time() - particle_start_time > 2:
         particle_start_time = time.time() * 2
         for particles in particles1,particles2,particles3,particles4,particles5,particles6,particles7,particles8,particles9,particles10:
@@ -379,11 +380,11 @@ while running:
             player.turns += 1
         else:
             player.move(0,3)
-        if player.turns > 45 and speed == 2:
+        if player.turns > 45 and player.speed == 2:
             player.turns = 0
             particle_start_time = time.time()
             player.onGround = False
-        elif player.turns > 35 and speed == 6:
+        elif player.turns > 35 and player.speed == 6:
             player.turns = 0
             particle_start_time = time.time()
             player.onGround = False
@@ -391,17 +392,17 @@ while running:
         player.move(0,3)
         
     if user_input[pygame.K_DOWN]:
-        player.move(0,3)
+        player.move(0,player.speed)
         
     if user_input[pygame.K_LEFT]:
-        player.move(-speed,0)
-    if player.rect.x < -59:
-        player.rect.x = width
+        player.move(-player.speed,0)
+    if player.rect.x < -30:
+        player.rect.x = width - 30
         
     if user_input[pygame.K_RIGHT]:
-        player.move(speed,0)
-    if player.rect.x > width:
-        player.rect.x = -59
+        player.move(player.speed,0)
+    if player.rect.x > width - 30:
+        player.rect.x = -30
         
     if player.rect.colliderect(end_rect):
         del walls[:]
@@ -465,11 +466,23 @@ while running:
     for enemy in enemies:
         pygame.draw.rect(screen,spike_colour,enemy.rect)
     for block in blocks:
+        if block.rect.x > width - 48:
+            clone.x,clone.y,clone.width,clone.height = block.rect.x-width,block.rect.y,48,48
+            pygame.draw.rect(screen,wall_colour,clone)
+        if block.rect.x < 0:
+            clone.x,clone.y,clone.width,clone.height = block.rect.x+width,block.rect.y,48,48
+            pygame.draw.rect(screen,wall_colour,clone)
         pygame.draw.rect(screen,wall_colour,block.rect)
     for particles in particles1,particles2,particles3,particles4,particles5,particles6,particles7,particles8,particles9,particles10:
         for particle in particles:
             pygame.draw.rect(screen,particle_colour,particle.rect)
     pygame.draw.rect(screen,(255,0,0),end_rect)
+    if player.rect.x > width - 60:
+        clone.x,clone.y,clone.width,clone.height = player.rect.x-width,player.rect.y,60,60
+        pygame.draw.rect(screen,colour,clone)
+    if player.rect.x < 0:
+        clone.x,clone.y,clone.width,clone.height = player.rect.x+width,player.rect.y,60,60
+        pygame.draw.rect(screen,colour,clone)
     pygame.draw.rect(screen,colour,player.rect)
     label1 = myfont.render(("Deaths: " + str(player.dscore)), False, (0,0,0))
     label2 = myfont.render(("Time: " + str(int(time.time())-int(startTime2)+endTime-startTime1) + "s"), False, (0,0,0))
