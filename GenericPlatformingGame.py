@@ -298,7 +298,7 @@ while running:
     for enemy in enemies:
         enemy.move(5)
         if enemy.rect.colliderect(player.rect):
-            player.rect = pygame.Rect(50,800,60,60)
+            player.rect.x,player.rect.y = 50,800
             player.dscore += 1
         enemy.check_y()
     for block in blocks:
