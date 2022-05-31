@@ -275,7 +275,7 @@ for row in level:
     y += 48
     x = 0
 
-label3 = myfont.render(("| Arrow keys = Move | Space = Change Ability | Backspace = Restart Level | ESC = Quit |"), False, (0,0,0))
+label3 = myfont.render(("| WASD keys = Move | LSHIFT = Change Ability | LCTRL = Restart Level | ESC = Quit |"), False, (0,0,0))
 #Start Game
 running = True
 startTime1 = int(time.time())
@@ -286,7 +286,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_SPACE):
+        if (event.type == pygame.KEYDOWN) and (event.key == pygame.K_LSHIFT):
             if colour == (100,128,255):
                 colour = (255,128,100)
                 player.speed = 6
@@ -331,10 +331,10 @@ while running:
     for particles in particles1,particles2,particles3,particles4,particles5,particles6,particles7,particles8,particles9,particles10:
         for particle in particles:
             particle.move(random.randint(-3,3),random.randint(0,5))
-    if user_input[pygame.K_BACKSPACE]:
+    if user_input[pygame.K_LCTRL]:
         player.rect.x = 50
         player.rect.y = 800
-    if user_input[pygame.K_UP]:
+    if user_input[pygame.K_w]:
         if player.onGround:
             if player.turns <= 5:
                 for particle in particles1:
@@ -391,15 +391,15 @@ while running:
     elif player.rect.y < (height - 60):
         player.move(0,3)
         
-    if user_input[pygame.K_DOWN]:
+    if user_input[pygame.K_s]:
         player.move(0,player.speed)
         
-    if user_input[pygame.K_LEFT]:
+    if user_input[pygame.K_a]:
         player.move(-player.speed,0)
     if player.rect.x < -59:
         player.rect.x = width - 59
         
-    if user_input[pygame.K_RIGHT]:
+    if user_input[pygame.K_d]:
         player.move(player.speed,0)
     if player.rect.x > width:
         player.rect.x = 0
