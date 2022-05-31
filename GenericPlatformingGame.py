@@ -224,18 +224,18 @@ save_answer = str(input("Do you have a save?\n>: ")).strip().lower()
 if save_answer == "yes" or save_answer == "ye" or save_answer == "y":
     for saveFile in os.listdir(os.fsencode("saves")):
         print(os.fsdecode(saveFile).replace(".bin",""))
-    slot = str(input("Name the save.\n>: ")).strp().lower()
+    slot = str(input("Name the save.\n>: ")).strip().lower()
     file = open(os.path.join("saves", slot + ".bin"), "rb")
-    words = fileKey.decrypt(file.read()).decode().split()
+    words = fileKey.decrypt(file.read()).decode().split(" ")
     file.close()
-    name = str(words[0])
-    player.dscore = int(words[1])
-    startTime2 = int(words[2])
-    endTime = int(words[3])
-    levelTurn = int(words[4])
+    name = " ".join(words[-5:])
+    player.dscore = int(words[-4])
+    startTime2 = int(words[-3])
+    endTime = int(words[-2])
+    levelTurn = int(words[-1])
     particle_start_time = time.time() * 2
 else:
-    name = str(input("What is your name? (Leader Board, One Word)\n>: ")).strip()
+    name = str(input("What is your name? (Leader Board, Preferrably One Word)\n>: ")).strip()
     endTime = 0
     startTime2 = 0
     levelTurn = 0
