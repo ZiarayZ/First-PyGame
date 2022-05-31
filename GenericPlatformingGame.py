@@ -217,7 +217,7 @@ for turn in range(200):
 player = Player() #Create a player object from class
 colour = (100,128,255)
 wall_colour = (255,255,255)
-fake_wall_colour = (254,254,254)
+fake_wall_colour = (250,250,250)
 particle_colour = (220,220,220)
 spike_colour = (128,128,128)
 save_answer = str(input("Do you have a save?\n>: ")).strip().lower()
@@ -255,7 +255,7 @@ clock = pygame.time.Clock()
 myfont = pygame.font.SysFont("Arial", 25, True, False)
 level = levels[levelTurn]
 x = y = 0
-for row in level: 
+for row in level:
     for col in row:
         if col == "W":#W - Wall
             walls.append(pygame.Rect(x,y,48,48))
@@ -396,13 +396,13 @@ while running:
         
     if user_input[pygame.K_LEFT]:
         player.move(-player.speed,0)
-    if player.rect.x < -30:
-        player.rect.x = width - 30
+    if player.rect.x < -59:
+        player.rect.x = width - 59
         
     if user_input[pygame.K_RIGHT]:
         player.move(player.speed,0)
-    if player.rect.x > width - 30:
-        player.rect.x = -30
+    if player.rect.x > width:
+        player.rect.x = 0
         
     if player.rect.colliderect(end_rect):
         del walls[:]
@@ -479,9 +479,15 @@ while running:
     pygame.draw.rect(screen,(255,0,0),end_rect)
     if player.rect.x > width - 60:
         clone.x,clone.y,clone.width,clone.height = player.rect.x-width,player.rect.y,60,60
+        for wall in walls:
+            if wall.colliderect(clone):
+                clone.right = wall.left
         pygame.draw.rect(screen,colour,clone)
     if player.rect.x < 0:
         clone.x,clone.y,clone.width,clone.height = player.rect.x+width,player.rect.y,60,60
+        for wall in walls:
+            if wall.colliderect(clone):
+                clone.left = wall.right
         pygame.draw.rect(screen,colour,clone)
     pygame.draw.rect(screen,colour,player.rect)
     label1 = myfont.render(("Deaths: " + str(player.dscore)), False, (0,0,0))
