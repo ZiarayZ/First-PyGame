@@ -224,7 +224,7 @@ save_answer = str(input("Do you have a save?\n>: ")).strip().lower()
 if save_answer == "yes" or save_answer == "ye" or save_answer == "y":
     for saveFile in os.listdir(os.fsencode("saves")):
         print(os.fsdecode(saveFile).replace(".bin",""))
-    slot = str(input("Name the save.\n>: ")).lower()
+    slot = str(input("Name the save.\n>: ")).strp().lower()
     file = open(os.path.join("saves", slot + ".bin"), "rb")
     words = fileKey.decrypt(file.read()).decode().split()
     file.close()
@@ -235,7 +235,7 @@ if save_answer == "yes" or save_answer == "ye" or save_answer == "y":
     levelTurn = int(words[4])
     particle_start_time = time.time() * 2
 else:
-    name = str(input("What is your name? (Leader Board, One Word)\n>: "))
+    name = str(input("What is your name? (Leader Board, One Word)\n>: ")).strip()
     endTime = 0
     startTime2 = 0
     levelTurn = 0
@@ -315,8 +315,9 @@ while running:
     user_input = pygame.key.get_pressed()
 
     if user_input[pygame.K_ESCAPE]:
-        if str(input("Would you like to save?\n>: ")).lower() == "yes":
-            slot = str(input("Name the save.\n>: ")).lower()
+        saveInput = str(input("Would you like to save?\n>: ")).strip().lower()
+        if saveInput == "yes" or saveInput == "ye" or saveInput == "y":
+            slot = str(input("Name the save.\n>: ")).strip().lower()
             saveMessage = name + " " + str(player.dscore) + " " + str(startTime1) + " " + str(int(time.time())) + " " + str(levelTurn)
             file = open(os.path.join("saves", slot + ".bin"), "wb")
             #translate decrypted to encrypted
